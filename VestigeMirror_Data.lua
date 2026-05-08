@@ -80,35 +80,6 @@ local function GetCollectibleDisplay(collectibleId, itemMaterialIndex)
     return FormatName(name), materialName, icon
 end
 
-local function GetActiveCollectibleDisplayByType(collectibleCategoryType)
-    if not GetActiveCollectibleByType or not collectibleCategoryType then
-        return nil
-    end
-
-    local collectibleId = GetActiveCollectibleByType(collectibleCategoryType)
-    if not collectibleId or collectibleId <= 0 then
-        return nil
-    end
-
-    local name, _, icon = GetCollectibleInfo(collectibleId)
-    return
-    {
-        collectibleId = collectibleId,
-        name = FormatName(name),
-        icon = icon,
-    }
-end
-
-local function GetActiveCollectibleDyes(collectibleCategoryType)
-    if not GetRestyleSlotCurrentDyes or not RESTYLE_MODE_COLLECTIBLE or not collectibleCategoryType then
-        return BuildDyes(0, 0, 0)
-    end
-
-    local restyleSetIndex = ZO_RESTYLE_DEFAULT_SET_INDEX or 1
-    local primaryDyeId, secondaryDyeId, accentDyeId = GetRestyleSlotCurrentDyes(RESTYLE_MODE_COLLECTIBLE, restyleSetIndex, collectibleCategoryType)
-    return BuildDyes(primaryDyeId, secondaryDyeId, accentDyeId)
-end
-
 local function GetItemDisplay(bagId, equipSlot)
     local icon = GetItemInfo(bagId, equipSlot)
     local itemLink = GetItemLink(bagId, equipSlot, LINK_STYLE_DEFAULT)
@@ -152,30 +123,6 @@ function VestigeMirror.Data:BuildSlot(slotDef, outfitIndex, wornBag)
         equipSlot = slotDef.equipSlot,
         isEmpty = true,
     }
-
-    if slotDef.outfitSlot == OUTFIT_SLOT_HEAD then
-        local activeHeadCollectible = GetActiveCollectibleDisplayByType(COLLECTIBLE_CATEGORY_TYPE_HAT)
-        if activeHeadCollectible then
-            slot.name = activeHeadCollectible.name
-            slot.source = "Head Collectible"
-            slot.icon = activeHeadCollectible.icon or slot.icon
-            slot.collectibleId = activeHeadCollectible.collectibleId
-            slot.dyes = GetActiveCollectibleDyes(COLLECTIBLE_CATEGORY_TYPE_HAT)
-            slot.isEmpty = false
-            return slot
-        end
-    elseif slotDef.outfitSlot == OUTFIT_SLOT_CHEST then
-        local activeCostumeCollectible = GetActiveCollectibleDisplayByType(COLLECTIBLE_CATEGORY_TYPE_COSTUME)
-        if activeCostumeCollectible then
-            slot.name = activeCostumeCollectible.name
-            slot.source = "Costume Collectible"
-            slot.icon = activeCostumeCollectible.icon or slot.icon
-            slot.collectibleId = activeCostumeCollectible.collectibleId
-            slot.dyes = GetActiveCollectibleDyes(COLLECTIBLE_CATEGORY_TYPE_COSTUME)
-            slot.isEmpty = false
-            return slot
-        end
-    end
 
     if outfitIndex then
         local collectibleId, itemMaterialIndex, primaryDyeId, secondaryDyeId, accentDyeId = GetOutfitSlotInfo(self.actorCategory, outfitIndex, slotDef.outfitSlot)
