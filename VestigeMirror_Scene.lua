@@ -34,17 +34,11 @@ function VestigeMirror.Scene:OnSceneStateChanged(newState)
         if self.appearance then
             VestigeMirror.Preview:ShowAppearance(self.appearance)
         end
-    elseif newState == SCENE_HIDING then
-        self:Cleanup()
     elseif newState == SCENE_HIDDEN then
-        self:Cleanup()
+        VestigeMirror.UI:HideTextureKeybinds()
+        VestigeMirror.Preview:Hide()
         self.appearance = nil
     end
-end
-
-function VestigeMirror.Scene:Cleanup()
-    VestigeMirror.UI:HideTextureKeybinds()
-    VestigeMirror.Preview:Hide()
 end
 
 function VestigeMirror.Scene:IsShowing()
@@ -57,7 +51,6 @@ end
 
 function VestigeMirror.Scene:Hide()
     if self:IsShowing() then
-        self:Cleanup()
         SCENE_MANAGER:ShowBaseScene()
     end
 end
