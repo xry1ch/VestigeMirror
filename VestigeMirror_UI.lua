@@ -396,10 +396,23 @@ function VestigeMirror.UI:ApplyTextureState()
         return
     end
 
-    local width = BASE_TEXTURE_WIDTH * self.textureScale
-    local height = BASE_TEXTURE_HEIGHT * self.textureScale
-
     self.texture:SetTexture(texture.path)
+    local texWidth, texHeight = self.texture:GetTextureFileDimensions()
+    local safeTexWidth = (texWidth and texWidth > 0) and texWidth or BASE_TEXTURE_WIDTH
+    local safeTexHeight = (texHeight and texHeight > 0) and texHeight or BASE_TEXTURE_HEIGHT
+    local aspectRatio = safeTexWidth / safeTexHeight
+    local width
+    local height
+
+    -- Keep each texture's native aspect ratio and scale relative to its largest side.
+    if aspectRatio >= 1 then
+        width = BASE_TEXTURE_WIDTH * self.textureScale
+        height = (BASE_TEXTURE_HEIGHT / aspectRatio) * self.textureScale
+    else
+        width = (BASE_TEXTURE_WIDTH * aspectRatio) * self.textureScale
+        height = BASE_TEXTURE_HEIGHT * self.textureScale
+    end
+
     self.texture:SetDimensions(width, height)
     self.texture:ClearAnchors()
     self.texture:SetAnchor(CENTER, self.control, CENTER, self.textureOffsetX, self.textureOffsetY)
