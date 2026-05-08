@@ -1,0 +1,72 @@
+VestigeMirror = VestigeMirror or {}
+
+local ADDON_NAME = "VestigeMirror"
+
+ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TOGGLE", "Toggle Vestige Mirror")
+ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TEXTURE_PREVIOUS", "Vestige Mirror: Previous Texture")
+ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TEXTURE_NEXT", "Vestige Mirror: Next Texture")
+ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TEXTURE_SCALE_DOWN", "Vestige Mirror: Texture Scale Down")
+ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TEXTURE_SCALE_UP", "Vestige Mirror: Texture Scale Up")
+
+function VestigeMirror:Initialize()
+    if self.initialized then
+        return
+    end
+
+    self.Data:Initialize()
+    self.Preview:Initialize()
+    self.UI:Initialize(VestigeMirrorWindow)
+    self.Scene:Initialize()
+
+    SLASH_COMMANDS["/vestigemirror"] = function() self:Toggle() end
+    SLASH_COMMANDS["/vm"] = function() self:Toggle() end
+
+    self.initialized = true
+end
+
+function VestigeMirror:Toggle()
+    if not self.initialized then
+        return
+    end
+
+    if self.Scene:IsShowing() then
+        self:Hide()
+    else
+        self:Show()
+    end
+end
+
+function VestigeMirror:Show()
+    if not self.initialized then
+        return
+    end
+
+    self.Scene:Show()
+end
+
+function VestigeMirror:Hide()
+    if not self.initialized then
+        return
+    end
+
+    self.Scene:Hide()
+end
+
+function VestigeMirror_OnInitialized(control)
+    VestigeMirror.window = control
+end
+
+function VestigeMirror_Toggle()
+    VestigeMirror:Toggle()
+end
+
+local function OnAddOnLoaded(_, addonName)
+    if addonName ~= ADDON_NAME then
+        return
+    end
+
+    EVENT_MANAGER:UnregisterForEvent(ADDON_NAME, EVENT_ADD_ON_LOADED)
+    VestigeMirror:Initialize()
+end
+
+EVENT_MANAGER:RegisterForEvent(ADDON_NAME, EVENT_ADD_ON_LOADED, OnAddOnLoaded)
