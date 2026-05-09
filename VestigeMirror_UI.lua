@@ -287,10 +287,10 @@ end
 local function AcquireCollectibleRows(parent, rows, collectibles)
     parent:SetHidden(#collectibles == 0)
 
-    local rowWidth = 244
-    local rowHeight = 28
-    local columnGap = 18
-    local rowGap = 3
+    local rowWidth = 300
+    local rowHeight = 42
+    local rowGap = 10
+    local rowOffsetX = 42
 
     for index, row in ipairs(rows) do
         row:SetHidden(index > #collectibles)
@@ -302,10 +302,16 @@ local function AcquireCollectibleRows(parent, rows, collectibles)
             row = WINDOW_MANAGER:CreateControl(parent:GetName() .. "Row" .. index, parent, CT_CONTROL)
             row:SetDimensions(rowWidth, rowHeight)
 
+            local readability = WINDOW_MANAGER:CreateControl(row:GetName() .. "Readability", row, CT_TEXTURE)
+            readability:SetTexture("EsoUI/Art/Miscellaneous/listItem_backdrop.dds")
+            readability:SetColor(0, 0, 0, 0.82)
+            readability:SetAnchor(TOPLEFT, row, TOPLEFT, 0, 3)
+            readability:SetAnchor(BOTTOMRIGHT, row, BOTTOMRIGHT, 0, 3)
+
             local iconFrame = WINDOW_MANAGER:CreateControl(row:GetName() .. "IconFrame", row, CT_TEXTURE)
             iconFrame:SetTexture("EsoUI/Art/SiegeBar/siegeSlot_empty.dds")
             iconFrame:SetDimensions(26, 26)
-            iconFrame:SetAnchor(LEFT, row, LEFT, 0, 0)
+            iconFrame:SetAnchor(LEFT, row, LEFT, 8, 0)
 
             local icon = WINDOW_MANAGER:CreateControl(row:GetName() .. "Icon", row, CT_TEXTURE)
             icon:SetDimensions(19, 19)
@@ -314,13 +320,13 @@ local function AcquireCollectibleRows(parent, rows, collectibles)
             local label = WINDOW_MANAGER:CreateControl(row:GetName() .. "Label", row, CT_LABEL)
             label:SetFont("$(BOLD_FONT)|11|soft-shadow-thick")
             label:SetColor(0.50, 0.91, 0.88, 1)
-            label:SetDimensions(204, 13)
+            label:SetDimensions(250, 13)
             label:SetMaxLineCount(1)
             label:SetAnchor(TOPLEFT, iconFrame, TOPRIGHT, 7, 0)
 
             local name = WINDOW_MANAGER:CreateControl(row:GetName() .. "Name", row, CT_LABEL)
             name:SetFont("$(BOLD_FONT)|13|soft-shadow-thick")
-            name:SetDimensions(204, 16)
+            name:SetDimensions(250, 16)
             name:SetMaxLineCount(1)
             name:SetAnchor(TOPLEFT, label, BOTTOMLEFT, 0, -1)
 
@@ -328,19 +334,7 @@ local function AcquireCollectibleRows(parent, rows, collectibles)
         end
 
         row:ClearAnchors()
-        local zeroBasedIndex = index - 1
-        local rowIndex = zo_floor(zeroBasedIndex / 3)
-        local column = zeroBasedIndex % 3
-        local remainingInRow = #collectibles - (rowIndex * 3)
-        local columnsInRow = remainingInRow >= 3 and 3 or remainingInRow
-        local rowWidthWithGaps = (rowWidth * columnsInRow) + (columnGap * (columnsInRow - 1))
-        local rowStartX = (796 - rowWidthWithGaps) / 2
-
-        if columnsInRow == 1 then
-            row:SetAnchor(TOP, parent, TOP, 0, (rowHeight + rowGap) * rowIndex)
-        else
-            row:SetAnchor(TOPLEFT, parent, TOPLEFT, rowStartX + ((rowWidth + columnGap) * column), (rowHeight + rowGap) * rowIndex)
-        end
+        row:SetAnchor(TOPLEFT, parent, TOPLEFT, rowOffsetX * (index - 1), (rowHeight + rowGap) * (index - 1))
 
         SetupCollectibleRow(row, collectible)
         row:SetHidden(false)
