@@ -3,19 +3,42 @@ VestigeMirror.Scene = {}
 
 local SCENE_NAME = "vestigeMirrorKeyboard"
 
+local function AddFragmentGroupIfExists(scene, fragmentGroup)
+    if fragmentGroup then
+        scene:AddFragmentGroup(fragmentGroup)
+    end
+end
+
+local function AddFragmentIfExists(scene, fragment)
+    if fragment then
+        scene:AddFragment(fragment)
+    end
+end
+
 function VestigeMirror.Scene:Initialize()
     if self.scene then
         return
     end
 
     local scene = ZO_Scene:New(SCENE_NAME, SCENE_MANAGER)
-    scene:AddFragmentGroup(FRAGMENT_GROUP.MOUSE_DRIVEN_UI_WINDOW)
-    scene:AddFragmentGroup(FRAGMENT_GROUP.FRAME_TARGET_CENTERED)
-    scene:AddFragment(STATS_OUTFIT_PREVIEW_OPTIONS_FRAGMENT)
-    scene:AddFragment(ITEM_PREVIEW_KEYBOARD:GetFragment())
-    scene:AddFragment(ZO_FadeSceneFragment:New(VestigeMirrorWindow))
-    scene:AddFragment(MINIMIZE_CHAT_FRAGMENT)
-    scene:AddFragment(CHARACTER_WINDOW_SOUNDS)
+    if FRAGMENT_GROUP then
+        AddFragmentGroupIfExists(scene, FRAGMENT_GROUP.MOUSE_DRIVEN_UI_WINDOW)
+        AddFragmentGroupIfExists(scene, FRAGMENT_GROUP.FRAME_TARGET_CENTERED)
+    end
+
+    AddFragmentIfExists(scene, STATS_OUTFIT_PREVIEW_OPTIONS_FRAGMENT)
+
+    local itemPreview = VestigeMirror.Preview:GetController()
+    if itemPreview and itemPreview.GetFragment then
+        AddFragmentIfExists(scene, itemPreview:GetFragment())
+    end
+
+    if ZO_FadeSceneFragment and VestigeMirrorWindow then
+        AddFragmentIfExists(scene, ZO_FadeSceneFragment:New(VestigeMirrorWindow))
+    end
+
+    AddFragmentIfExists(scene, MINIMIZE_CHAT_FRAGMENT)
+    AddFragmentIfExists(scene, CHARACTER_WINDOW_SOUNDS)
 
     scene:RegisterCallback("StateChange", function(_, newState)
         self:OnSceneStateChanged(newState)

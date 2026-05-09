@@ -1,19 +1,24 @@
 VestigeMirror = VestigeMirror or {}
 VestigeMirror.Preview = {}
 
+function VestigeMirror.Preview:GetController()
+    return ITEM_PREVIEW_KEYBOARD or ITEM_PREVIEW_GAMEPAD
+end
+
 function VestigeMirror.Preview:Initialize()
     self.active = false
 end
 
 function VestigeMirror.Preview:ShowAppearance(appearance)
-    if not ITEM_PREVIEW_KEYBOARD then
+    local controller = self:GetController()
+    if not controller or not controller.PreviewOutfit or not controller.PreviewUnequipOutfit then
         return
     end
 
     if appearance.outfitIndex then
-        ITEM_PREVIEW_KEYBOARD:PreviewOutfit(appearance.actorCategory, appearance.outfitIndex)
+        controller:PreviewOutfit(appearance.actorCategory, appearance.outfitIndex)
     else
-        ITEM_PREVIEW_KEYBOARD:PreviewUnequipOutfit(appearance.actorCategory)
+        controller:PreviewUnequipOutfit(appearance.actorCategory)
     end
 
     self.active = true
@@ -24,8 +29,9 @@ function VestigeMirror.Preview:Hide()
         return
     end
 
-    if ITEM_PREVIEW_KEYBOARD then
-        ITEM_PREVIEW_KEYBOARD:ResetOutfitPreview()
+    local controller = self:GetController()
+    if controller and controller.ResetOutfitPreview then
+        controller:ResetOutfitPreview()
     end
 
     self.active = false
