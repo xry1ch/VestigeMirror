@@ -31,6 +31,17 @@ local WEAPON_SLOTS =
     { label = "Backup Shield", outfitSlot = OUTFIT_SLOT_SHIELD_BACKUP, equipSlot = EQUIP_SLOT_BACKUP_OFF, icon = "EsoUI/Art/Dye/outfitSlot_shield.dds" },
 }
 
+local APPEARANCE_COLLECTIBLES =
+{
+    { label = "Hair Style", typeNames = { "COLLECTIBLE_CATEGORY_TYPE_HAIR" } },
+    { label = "Head Markings", typeNames = { "COLLECTIBLE_CATEGORY_TYPE_HEAD_MARKING" } },
+    { label = "Major Adornments", typeNames = { "COLLECTIBLE_CATEGORY_TYPE_FACIAL_ACCESSORY", "COLLECTIBLE_CATEGORY_TYPE_MAJOR_ADORNMENT" } },
+    { label = "Minor Adornments", typeNames = { "COLLECTIBLE_CATEGORY_TYPE_PIERCING_JEWELRY", "COLLECTIBLE_CATEGORY_TYPE_MINOR_ADORNMENT" } },
+    { label = "Body Marking", typeNames = { "COLLECTIBLE_CATEGORY_TYPE_BODY_MARKING" } },
+    { label = "Skin", typeNames = { "COLLECTIBLE_CATEGORY_TYPE_SKIN" } },
+    { label = "Personality", typeNames = { "COLLECTIBLE_CATEGORY_TYPE_PERSONALITY" } },
+}
+
 local function FormatName(name)
     if name and name ~= "" then
         if ZO_CachedStrFormat then
@@ -39,6 +50,17 @@ local function FormatName(name)
         return name
     end
     return "Empty"
+end
+
+local function ResolveFirstConstant(typeNames)
+    for _, typeName in ipairs(typeNames) do
+        local value = _G[typeName]
+        if value ~= nil then
+            return value
+        end
+    end
+
+    return nil
 end
 
 local function BuildDye(dyeId)
@@ -107,6 +129,39 @@ local function GetActiveHeadCollectibleDyes()
     local restyleSetIndex = ZO_RESTYLE_DEFAULT_SET_INDEX or 1
     local primaryDyeId, secondaryDyeId, accentDyeId = GetRestyleSlotCurrentDyes(RESTYLE_MODE_COLLECTIBLE, restyleSetIndex, COLLECTIBLE_CATEGORY_TYPE_HAT)
     return BuildDyes(primaryDyeId, secondaryDyeId, accentDyeId)
+end
+
+local function BuildActiveAppearanceCollectibles()
+    local collectibles = {}
+
+    for _, collectibleDef in ipairs(APPEARANCE_COLLECTIBLES) do
+        local collectible =
+        {
+            label = collectibleDef.label,
+            name = "None",
+            icon = nil,
+            collectibleId = nil,
+            isEmpty = true,
+        }
+
+        local categoryType = ResolveFirstConstant(collectibleDef.typeNames)
+        if GetActiveCollectibleByType and categoryType then
+            local collectibleId = GetActiveCollectibleByType(categoryType)
+            if collectibleId and collectibleId > 0 then
+                local name, _, icon = GetCollectibleInfo(collectibleId)
+                collectible.name = FormatName(name)
+                collectible.icon = icon
+                collectible.collectibleId = collectibleId
+                collectible.isEmpty = false
+            end
+        end
+
+        if not collectible.isEmpty then
+            table.insert(collectibles, collectible)
+        end
+    end
+
+    return collectibles
 end
 
 local function GetItemDisplay(bagId, equipSlot)
@@ -227,5 +282,6 @@ function VestigeMirror.Data:BuildAppearance()
         outfitName = outfitName,
         armorSlots = armorSlots,
         weaponSlots = weaponSlots,
+        appearanceCollectibles = BuildActiveAppearanceCollectibles(),
     }
 end

@@ -249,6 +249,96 @@ local function SplitArmorSlots(slots)
     return leftSlots, rightSlots
 end
 
+local function SetupCollectibleRow(row, collectible)
+    local iconFrame = row:GetNamedChild("IconFrame")
+    local icon = row:GetNamedChild("Icon")
+    local label = row:GetNamedChild("Label")
+    local name = row:GetNamedChild("Name")
+
+    label:SetText(collectible.label)
+    name:SetText(collectible.name)
+
+    if collectible.icon then
+        icon:SetTexture(collectible.icon)
+        icon:SetHidden(false)
+    else
+        icon:SetHidden(true)
+    end
+
+    if collectible.isEmpty then
+        iconFrame:SetAlpha(0.35)
+        icon:SetAlpha(0.35)
+        name:SetColor(0.56, 0.59, 0.62, 1)
+    else
+        iconFrame:SetAlpha(1)
+        icon:SetAlpha(1)
+        name:SetColor(0.95, 0.91, 0.82, 1)
+    end
+end
+
+local function AcquireCollectibleRows(parent, rows, collectibles)
+    parent:SetHidden(#collectibles == 0)
+
+    local rowWidth = 244
+    local rowHeight = 28
+    local columnGap = 18
+    local rowGap = 3
+
+    for index, row in ipairs(rows) do
+        row:SetHidden(index > #collectibles)
+    end
+
+    for index, collectible in ipairs(collectibles) do
+        local row = rows[index]
+        if not row then
+            row = WINDOW_MANAGER:CreateControl(parent:GetName() .. "Row" .. index, parent, CT_CONTROL)
+            row:SetDimensions(rowWidth, rowHeight)
+
+            local iconFrame = WINDOW_MANAGER:CreateControl(row:GetName() .. "IconFrame", row, CT_TEXTURE)
+            iconFrame:SetTexture("EsoUI/Art/SiegeBar/siegeSlot_empty.dds")
+            iconFrame:SetDimensions(26, 26)
+            iconFrame:SetAnchor(LEFT, row, LEFT, 0, 0)
+
+            local icon = WINDOW_MANAGER:CreateControl(row:GetName() .. "Icon", row, CT_TEXTURE)
+            icon:SetDimensions(19, 19)
+            icon:SetAnchor(CENTER, iconFrame, CENTER, 0, 0)
+
+            local label = WINDOW_MANAGER:CreateControl(row:GetName() .. "Label", row, CT_LABEL)
+            label:SetFont("$(BOLD_FONT)|11|soft-shadow-thick")
+            label:SetColor(0.50, 0.91, 0.88, 1)
+            label:SetDimensions(204, 13)
+            label:SetMaxLineCount(1)
+            label:SetAnchor(TOPLEFT, iconFrame, TOPRIGHT, 7, 0)
+
+            local name = WINDOW_MANAGER:CreateControl(row:GetName() .. "Name", row, CT_LABEL)
+            name:SetFont("$(BOLD_FONT)|13|soft-shadow-thick")
+            name:SetDimensions(204, 16)
+            name:SetMaxLineCount(1)
+            name:SetAnchor(TOPLEFT, label, BOTTOMLEFT, 0, -1)
+
+            rows[index] = row
+        end
+
+        row:ClearAnchors()
+        local zeroBasedIndex = index - 1
+        local rowIndex = zo_floor(zeroBasedIndex / 3)
+        local column = zeroBasedIndex % 3
+        local remainingInRow = #collectibles - (rowIndex * 3)
+        local columnsInRow = remainingInRow >= 3 and 3 or remainingInRow
+        local rowWidthWithGaps = (rowWidth * columnsInRow) + (columnGap * (columnsInRow - 1))
+        local rowStartX = (796 - rowWidthWithGaps) / 2
+
+        if columnsInRow == 1 then
+            row:SetAnchor(TOP, parent, TOP, 0, (rowHeight + rowGap) * rowIndex)
+        else
+            row:SetAnchor(TOPLEFT, parent, TOPLEFT, rowStartX + ((rowWidth + columnGap) * column), (rowHeight + rowGap) * rowIndex)
+        end
+
+        SetupCollectibleRow(row, collectible)
+        row:SetHidden(false)
+    end
+end
+
 local function SetTextButtonHandler(control, callback)
     control:SetMouseEnabled(true)
     control:SetHandler("OnMouseDown", function(_, button)
@@ -263,6 +353,7 @@ function VestigeMirror.UI:Initialize(control)
     self.leftCallouts = {}
     self.rightCallouts = {}
     self.weaponCallouts = {}
+    self.collectibleRows = {}
     self.selectedTextureIndex = 1
     self.textureScale = 1
     self.textureOffsetX = 0
@@ -279,6 +370,9 @@ function VestigeMirror.UI:Initialize(control)
     self.moveTexture = self.textureBar:GetNamedChild("MoveTexture")
     self.textureNextLabel = self.textureNext:GetNamedChild("Label")
     self.moveTextureLabel = self.moveTexture:GetNamedChild("Label")
+    self.toggleCollectibles = self.textureBar:GetNamedChild("ToggleCollectibles")
+    self.toggleCollectiblesLabel = self.toggleCollectibles:GetNamedChild("Label")
+    self.collectiblesVisible = true
 
     SetTextButtonHandler(self.textureNext, function()
         self:CycleTexture(1)
@@ -294,6 +388,9 @@ function VestigeMirror.UI:Initialize(control)
     end)
     SetTextButtonHandler(self.moveTexture, function()
         self:ToggleTextureMoveMode()
+    end)
+    SetTextButtonHandler(self.toggleCollectibles, function()
+        self:ToggleCollectibles()
     end)
 
     control:SetHandler("OnKeyDown", function(_, key)
@@ -359,6 +456,7 @@ end
 function VestigeMirror.UI:RefreshTextureControls()
     self.textureNextLabel:SetText(string.format("Texture: %s", self:GetSelectedTextureName()))
     self.moveTextureLabel:SetText(self.textureMoveMode and "Done Moving Texture" or "Move Texture")
+    self.toggleCollectiblesLabel:SetText(self.collectiblesVisible and "Hide Collectibles" or "Show Collectibles")
     self.moveTexture:SetMouseEnabled(self:IsTextureVisible())
     self.moveTextureLabel:SetColor(0.96, 0.94, 0.87, self:IsTextureVisible() and 1 or 0.45)
 end
@@ -391,6 +489,16 @@ end
 
 function VestigeMirror.UI:ToggleTextureMoveMode()
     self:SetTextureMoveMode(not self.textureMoveMode)
+end
+
+function VestigeMirror.UI:SetCollectiblesVisible(visible)
+    self.collectiblesVisible = visible
+    self.control:GetNamedChild("Collectibles"):SetHidden(not visible)
+    self:RefreshTextureControls()
+end
+
+function VestigeMirror.UI:ToggleCollectibles()
+    self:SetCollectiblesVisible(not self.collectiblesVisible)
 end
 
 function VestigeMirror.UI:ApplyTextureState()
@@ -444,4 +552,6 @@ function VestigeMirror.UI:Refresh(appearance)
     AcquireCallouts(self.control:GetNamedChild("LeftCallouts"), self.leftCallouts, leftArmorSlots, nil, "left")
     AcquireCallouts(self.control:GetNamedChild("RightCallouts"), self.rightCallouts, rightArmorSlots, nil, "right")
     AcquireCallouts(self.control:GetNamedChild("BottomCallouts"), self.weaponCallouts, appearance.weaponSlots, "horizontal", "left")
+    AcquireCollectibleRows(self.control:GetNamedChild("Collectibles"):GetNamedChild("Rows"), self.collectibleRows, appearance.appearanceCollectibles or {})
+    self.control:GetNamedChild("Collectibles"):SetHidden(not self.collectiblesVisible)
 end
