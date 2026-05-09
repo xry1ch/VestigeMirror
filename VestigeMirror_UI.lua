@@ -18,6 +18,14 @@ local RIGHT_ARMOR_SLOTS =
 local TEXTURES =
 {
     { name = "None" },
+    { name = "Login Eso Logo", path = "/esoui/art/login/gamepad/login_eso_logo.dds" },
+    { name = "Gamma Reference Image 1", path = "/esoui/art/gammaadjust/gamma_referenceimage1.dds" },
+    { name = "Sigil Warden 01", path = "/art/fx/texture/sigil_warden_01.dds" },
+    { name = "Sigil Necromancer", path = "/art/fx/texture/sigil_necromancer.dds" },
+    { name = "Sigil Sorcerer", path = "/art/fx/texture/sigil_sorcerer.dds" },
+    { name = "Sigil Nightblade", path = "/art/fx/texture/sigil_nightblade.dds" },
+    { name = "Sigil Nightblade Triple", path = "/art/fx/texture/sigil_nightbladetriple.dds" },
+    { name = "Sigil Templar", path = "/art/fx/texture/sigil_templar.dds" },
     { name = "Rourken Steamguards", path = "/art/fx/texture/rourkensteamguards_overlay.dds" },
     { name = "Arcanist Ring 01", path = "/art/fx/texture/arcanist_textring_01.dds" },
     { name = "Arcanist Ring 02", path = "/art/fx/texture/arcanist_textring_02.dds" },
@@ -28,7 +36,6 @@ local TEXTURES =
     { name = "Blood Bib", path = "/art/fx/texture/fxmaterial/bloodbib.dds" },
     { name = "Blood Splatters 4x4", path = "/art/fx/texture/bloodsplatters4x4.dds" },
     { name = "Cherry Blossom Ground", path = "/art/fx/texture/cherryblossomground_01.dds" },
-    { name = "Ouroboros Loading Bloom", path = "/esoui/art/pregameanimatedbackground/ouroboros_loading_bloom.dds" },
     { name = "Wood Station Rune", path = "/art/fx/texture/wood_station_rune01.dds" },
     { name = "Avatar Activation Rune Glow", path = "/art/fx/texture/fxmaterial/skr_duc_avataractivationrune01_glow.dds" },
     { name = "Holy Rune Sigil", path = "/art/fx/texture/sigilholyrunes.dds" },
@@ -58,6 +65,18 @@ local TEXTURES =
     { name = "Tribute Card Back Highlight", path = "/esoui/art/tribute/tributecardback_highlight.dds" },
     { name = "Vampire Sigil", path = "/art/fx/texture/sigil_vampire.dds" },
     { name = "Vampire Door Sigil", path = "/art/fx/texture/sigil_vampire_door.dds" },
+    { name = "Tablet Smemento Sigil 01", path = "/art/fx/texture/tabletsmemento_sigil_01.dds" },
+    { name = "Trial Maw Sigil Darkmoon", path = "/art/fx/texture/trial_maw_sigil_darkmoon.dds" },
+    { name = "Sigil Torvisard Markings 01", path = "/art/fx/texture/sigil_torvisardmarkings_01.dds" },
+    { name = "Sigil Spellcrafting Door", path = "/art/fx/texture/sigil_spellcraftingdoor.dds" },
+    { name = "Sigil Nighthollow Rite", path = "/art/fx/texture/sigil_nighthollow_rite.dds" },
+    { name = "Sigil Mhk Archivist", path = "/art/fx/texture/sigil_mhk_archivist.dds" },
+    { name = "Sigil Mages Guild", path = "/art/fx/texture/sigil_magesguild.dds" },
+    { name = "Sigil Harrowstorm", path = "/art/fx/texture/sigil_harrowstorm.dds" },
+    { name = "Sigil Fighters Guild 01", path = "/art/fx/texture/sigil_fightersguild_01.dds" },
+    { name = "Eye Sigil Pupil Rough Edge Alpha", path = "/art/fx/texture/eye_sigil_pupil_roughedge_alpha.dds" },
+    { name = "Antiquity Library Scroll", path = "/esoui/art/lorelibrary/antiquitylibrary_scroll.dds" },
+    { name = "Battleground Spectate Grey Gp", path = "/esoui/art/battlegrounds/battleground_spectate_grey_gp.dds" },
 }
 
 local BASE_TEXTURE_WIDTH = 1024
@@ -345,6 +364,9 @@ local function SetTextButtonHandler(control, callback)
     control:SetMouseEnabled(true)
     control:SetHandler("OnMouseDown", function(_, button)
         if button == MOUSE_BUTTON_INDEX_LEFT then
+            if PlaySound and SOUNDS and SOUNDS.DEFAULT_CLICK then
+                PlaySound(SOUNDS.DEFAULT_CLICK)
+            end
             callback()
         end
     end)

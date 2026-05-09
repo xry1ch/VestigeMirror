@@ -2,6 +2,15 @@ VestigeMirror = VestigeMirror or {}
 VestigeMirror.Scene = {}
 
 local SCENE_NAME = "vestigeMirrorKeyboard"
+local OPEN_SOUND_ID = "ZONE_STORIES_TRACK_ACTIVITY"
+
+local function PlayOpenSound()
+    if SOUNDS and SOUNDS[OPEN_SOUND_ID] then
+        PlaySound(SOUNDS[OPEN_SOUND_ID])
+    else
+        PlaySound(OPEN_SOUND_ID)
+    end
+end
 
 function VestigeMirror.Scene:Initialize()
     if self.scene then
@@ -26,6 +35,7 @@ end
 
 function VestigeMirror.Scene:OnSceneStateChanged(newState)
     if newState == SCENE_SHOWING then
+        PlayOpenSound()
         local appearance = self.pendingAppearance or VestigeMirror.Data:BuildAppearance()
         self.pendingAppearance = nil
         self.appearance = appearance
