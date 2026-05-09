@@ -309,15 +309,24 @@ function VestigeMirror.Data:EncodeAppearance(appearance)
     local entries = {}
 
     local function AddSlot(slot)
-        if not slot.isEmpty and slot.source == "Outfit Style" and slot.collectibleId and slot.collectibleId > 0 then
-            table.insert(entries, string.format("%d.%d.%d.%d.%d.%d",
-                slot.outfitSlot,
-                slot.collectibleId,
-                slot.itemMaterialIndex or DEFAULT_MATERIAL_INDEX,
-                slot.dyes[1].id or 0,
-                slot.dyes[2].id or 0,
-                slot.dyes[3].id or 0))
+        if slot.isEmpty or not slot.collectibleId or slot.collectibleId <= 0 then
+            return
         end
+
+        local itemMaterialIndex = slot.itemMaterialIndex or DEFAULT_MATERIAL_INDEX
+        if slot.source == "Head Collectible" and slot.outfitSlot == OUTFIT_SLOT_HEAD then
+            itemMaterialIndex = 0
+        elseif slot.source ~= "Outfit Style" then
+            return
+        end
+
+        table.insert(entries, string.format("%d.%d.%d.%d.%d.%d",
+            slot.outfitSlot,
+            slot.collectibleId,
+            itemMaterialIndex,
+            slot.dyes[1].id or 0,
+            slot.dyes[2].id or 0,
+            slot.dyes[3].id or 0))
     end
 
     for _, slot in ipairs(appearance.armorSlots or {}) do
@@ -356,11 +365,14 @@ function VestigeMirror.Data:DecodeShareString(value)
             return nil
         end
 
+        itemMaterialIndex = tonumber(itemMaterialIndex) or DEFAULT_MATERIAL_INDEX
+
         slotsByOutfitSlot[outfitSlot] =
         {
             outfitSlot = outfitSlot,
             collectibleId = collectibleId,
-            itemMaterialIndex = tonumber(itemMaterialIndex) or DEFAULT_MATERIAL_INDEX,
+            itemMaterialIndex = itemMaterialIndex,
+            isHeadCollectible = outfitSlot == OUTFIT_SLOT_HEAD and itemMaterialIndex == 0,
             dyeIds =
             {
                 tonumber(primaryDyeId) or 0,
@@ -404,12 +416,14 @@ function VestigeMirror.Data:BuildSharedAppearance(shared)
         }
 
         if sharedSlot then
-            local name, materialName, icon = GetCollectibleDisplay(sharedSlot.collectibleId, sharedSlot.itemMaterialIndex)
+            local itemMaterialIndex = sharedSlot.isHeadCollectible and nil or sharedSlot.itemMaterialIndex
+            local name, materialName, icon = GetCollectibleDisplay(sharedSlot.collectibleId, itemMaterialIndex)
             slot.name = name
-            slot.materialName = materialName
+            slot.source = sharedSlot.isHeadCollectible and "Head Collectible" or "Shared Outfit"
+            slot.materialName = sharedSlot.isHeadCollectible and nil or materialName
             slot.icon = icon or slot.icon
             slot.collectibleId = sharedSlot.collectibleId
-            slot.itemMaterialIndex = sharedSlot.itemMaterialIndex
+            slot.itemMaterialIndex = sharedSlot.isHeadCollectible and nil or itemMaterialIndex
             slot.dyes = BuildDyesFromIds(sharedSlot.dyeIds)
             slot.isEmpty = false
         end
