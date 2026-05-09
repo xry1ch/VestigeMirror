@@ -10,7 +10,10 @@ function VestigeMirror.Preview:ShowAppearance(appearance)
         return
     end
 
-    if appearance.outfitIndex then
+    if appearance.isShared then
+        self.active = false
+        return
+    elseif appearance.outfitIndex then
         ITEM_PREVIEW_KEYBOARD:PreviewOutfit(appearance.actorCategory, appearance.outfitIndex)
     else
         ITEM_PREVIEW_KEYBOARD:PreviewUnequipOutfit(appearance.actorCategory)

@@ -2,6 +2,7 @@
 ## Author: |cFFFF00Wrynch|r
 ## Version: 1.0.0
 ## APIVersion: 101049
+## OptionalDependsOn: LibChatMessage>=113
 
 VestigeMirror.lua
 Bindings.xml

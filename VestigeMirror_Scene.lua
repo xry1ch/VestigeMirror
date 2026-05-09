@@ -26,7 +26,8 @@ end
 
 function VestigeMirror.Scene:OnSceneStateChanged(newState)
     if newState == SCENE_SHOWING then
-        local appearance = VestigeMirror.Data:BuildAppearance()
+        local appearance = self.pendingAppearance or VestigeMirror.Data:BuildAppearance()
+        self.pendingAppearance = nil
         self.appearance = appearance
         VestigeMirror.UI:Refresh(appearance)
         VestigeMirror.UI:ShowTextureKeybinds()
@@ -46,6 +47,19 @@ function VestigeMirror.Scene:IsShowing()
 end
 
 function VestigeMirror.Scene:Show()
+    SCENE_MANAGER:Show(SCENE_NAME)
+end
+
+function VestigeMirror.Scene:ShowAppearance(appearance)
+    if self:IsShowing() then
+        self.appearance = appearance
+        VestigeMirror.UI:Refresh(appearance)
+        VestigeMirror.Preview:Hide()
+        VestigeMirror.Preview:ShowAppearance(appearance)
+        return
+    end
+
+    self.pendingAppearance = appearance
     SCENE_MANAGER:Show(SCENE_NAME)
 end
 
