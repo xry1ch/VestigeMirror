@@ -161,6 +161,13 @@ end
 local function SetupCallout(callout, slot, side)
     ConfigureCalloutSide(callout, side)
 
+    local iconFrame = callout:GetNamedChild("IconFrame")
+    if slot.label == "Head" and slot.source == "Head Collectible" then
+        iconFrame:SetTexture("/esoui/art/siegebar/siegeslot_pressed.dds")
+    else
+        iconFrame:SetTexture("EsoUI/Art/SiegeBar/siegeSlot_empty.dds")
+    end
+
     callout:GetNamedChild("Icon"):SetTexture(slot.icon)
     callout:GetNamedChild("Slot"):SetText(slot.label)
     callout:GetNamedChild("Name"):SetText(slot.name)
@@ -428,22 +435,6 @@ end
 function VestigeMirror.UI:AdjustTextureScale(delta)
     self.textureScale = Clamp(self.textureScale + delta, MIN_TEXTURE_SCALE, MAX_TEXTURE_SCALE)
     self:ApplyTextureState()
-end
-
-function VestigeMirror_TexturePrevious()
-    VestigeMirror.UI:CycleTexture(-1)
-end
-
-function VestigeMirror_TextureNext()
-    VestigeMirror.UI:CycleTexture(1)
-end
-
-function VestigeMirror_TextureScaleDown()
-    VestigeMirror.UI:AdjustTextureScale(-0.1)
-end
-
-function VestigeMirror_TextureScaleUp()
-    VestigeMirror.UI:AdjustTextureScale(0.1)
 end
 
 function VestigeMirror.UI:Refresh(appearance)

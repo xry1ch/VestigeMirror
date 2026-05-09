@@ -3,10 +3,6 @@ VestigeMirror = VestigeMirror or {}
 local ADDON_NAME = "VestigeMirror"
 
 ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TOGGLE", "Toggle Vestige Mirror")
-ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TEXTURE_PREVIOUS", "Vestige Mirror: Previous Texture")
-ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TEXTURE_NEXT", "Vestige Mirror: Next Texture")
-ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TEXTURE_SCALE_DOWN", "Vestige Mirror: Texture Scale Down")
-ZO_CreateStringId("SI_BINDING_NAME_VESTIGE_MIRROR_TEXTURE_SCALE_UP", "Vestige Mirror: Texture Scale Up")
 
 function VestigeMirror:Initialize()
     if self.initialized then
