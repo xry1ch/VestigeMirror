@@ -68,16 +68,6 @@
                 VestigeMirror_OnInitialized(self)
             </OnInitialized>
             <Controls>
-                <Control name="$(parent)TextureLayer" mouseEnabled="false" layer="BACKGROUND" level="0">
-                    <AnchorFill/>
-                    <Controls>
-                        <Texture name="VestigeMirrorWindowTexture" hidden="true" mouseEnabled="false" layer="BACKGROUND" level="0">
-                            <Dimensions x="1024" y="1024"/>
-                            <Anchor point="CENTER"/>
-                        </Texture>
-                    </Controls>
-                </Control>
-
                 <Label name="$(parent)Title" font="$(BOLD_FONT)|28|soft-shadow-thick" color="F6F0DEFF" text="Vestige Mirror">
                     <Anchor point="TOPLEFT" offsetX="58" offsetY="44"/>
                 </Label>
@@ -126,70 +116,20 @@
 
             </Controls>
         </TopLevelControl>
-
-        <TopLevelControl name="VestigeMirrorTextureMoveLayer" hidden="true" mouseEnabled="true" layer="OVERLAY" tier="MEDIUM">
-            <AnchorFill/>
-        </TopLevelControl>
-
-        <TopLevelControl name="VestigeMirrorTextureBar" hidden="true" mouseEnabled="true" layer="OVERLAY" tier="HIGH">
-            <Dimensions x="1020" y="26"/>
+        <TopLevelControl name="VestigeMirrorToggleBar" hidden="true" mouseEnabled="true" layer="OVERLAY" tier="HIGH">
+            <Dimensions x="520" y="26"/>
             <Anchor point="BOTTOM" offsetY="-2"/>
             <Controls>
-                <Control name="$(parent)TextureNext" mouseEnabled="true">
-                    <Dimensions x="250" y="24"/>
-                    <Anchor point="LEFT" offsetX="10"/>
-                    <Controls>
-                        <Label name="$(parent)Label" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Texture: None">
-                            <AnchorFill/>
-                        </Label>
-                    </Controls>
-                </Control>
-
-                <Control name="$(parent)TexturePrevious" mouseEnabled="true">
-                    <Dimensions x="150" y="24"/>
-                    <Anchor point="LEFT" relativeTo="$(parent)TextureNext" relativePoint="RIGHT" offsetX="12"/>
-                    <Controls>
-                        <Label name="$(parent)Label" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Previous Texture">
-                            <AnchorFill/>
-                        </Label>
-                    </Controls>
-                </Control>
-
-                <Control name="$(parent)ScaleDown" mouseEnabled="true">
-                    <Dimensions x="120" y="24"/>
-                    <Anchor point="LEFT" relativeTo="$(parent)TexturePrevious" relativePoint="RIGHT" offsetX="12"/>
-                    <Controls>
-                        <Label name="$(parent)Label" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Scale -">
-                            <AnchorFill/>
-                        </Label>
-                    </Controls>
-                </Control>
-
-                <Control name="$(parent)ScaleUp" mouseEnabled="true">
-                    <Dimensions x="120" y="24"/>
-                    <Anchor point="LEFT" relativeTo="$(parent)ScaleDown" relativePoint="RIGHT" offsetX="12"/>
-                    <Controls>
-                        <Label name="$(parent)Label" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Scale +">
-                            <AnchorFill/>
-                        </Label>
-                    </Controls>
-                </Control>
-
-                <Control name="$(parent)MoveTexture" mouseEnabled="true">
-                    <Dimensions x="150" y="24"/>
-                    <Anchor point="LEFT" relativeTo="$(parent)ScaleUp" relativePoint="RIGHT" offsetX="12"/>
-                    <Controls>
-                        <Label name="$(parent)Label" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Move Texture">
-                            <AnchorFill/>
-                        </Label>
-                    </Controls>
-                </Control>
+                <Label name="$(parent)CloseHint" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Menu/Options: Close">
+                    <Dimensions x="210" y="24"/>
+                    <Anchor point="LEFT"/>
+                </Label>
 
                 <Control name="$(parent)ToggleCollectibles" mouseEnabled="true">
-                    <Dimensions x="170" y="24"/>
-                    <Anchor point="LEFT" relativeTo="$(parent)MoveTexture" relativePoint="RIGHT" offsetX="12"/>
+                    <Dimensions x="310" y="24"/>
+                    <Anchor point="LEFT" relativeTo="$(parent)CloseHint" relativePoint="RIGHT" offsetX="20"/>
                     <Controls>
-                        <Label name="$(parent)Label" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Hide Collectibles">
+                        <Label name="$(parent)Label" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Y/Triangle: Hide Collectibles">
                             <AnchorFill/>
                         </Label>
                     </Controls>

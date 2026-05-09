@@ -3,7 +3,6 @@ VestigeMirror.Data = {}
 
 local PLAYER_ACTOR_CATEGORY = GAMEPLAY_ACTOR_CATEGORY_PLAYER
 local DEFAULT_MATERIAL_INDEX = 1
-local SHARE_PREFIX = "VM1:"
 
 local ARMOR_SLOTS =
 {
@@ -52,7 +51,6 @@ local function FormatName(name)
     end
     return "Empty"
 end
-
 local function ResolveFirstConstant(typeNames)
     for _, typeName in ipairs(typeNames) do
         local value = _G[typeName]
@@ -82,7 +80,6 @@ local function BuildDye(dyeId)
         empty = false,
     }
 end
-
 local function BuildDyes(primaryDyeId, secondaryDyeId, accentDyeId)
     return
     {
@@ -130,10 +127,6 @@ local function GetActiveHeadCollectibleDyes()
     local restyleSetIndex = ZO_RESTYLE_DEFAULT_SET_INDEX or 1
     local primaryDyeId, secondaryDyeId, accentDyeId = GetRestyleSlotCurrentDyes(RESTYLE_MODE_COLLECTIBLE, restyleSetIndex, COLLECTIBLE_CATEGORY_TYPE_HAT)
     return BuildDyes(primaryDyeId, secondaryDyeId, accentDyeId)
-end
-
-local function BuildDyesFromIds(dyeIds)
-    return BuildDyes(dyeIds[1] or 0, dyeIds[2] or 0, dyeIds[3] or 0)
 end
 
 local function BuildActiveAppearanceCollectibles()
@@ -302,154 +295,5 @@ function VestigeMirror.Data:BuildAppearance()
         armorSlots = armorSlots,
         weaponSlots = weaponSlots,
         appearanceCollectibles = BuildActiveAppearanceCollectibles(),
-    }
-end
-
-function VestigeMirror.Data:EncodeAppearance(appearance)
-    local entries = {}
-
-    local function AddSlot(slot)
-        if slot.isEmpty or not slot.collectibleId or slot.collectibleId <= 0 then
-            return
-        end
-
-        local itemMaterialIndex = slot.itemMaterialIndex or DEFAULT_MATERIAL_INDEX
-        if slot.source == "Head Collectible" and slot.outfitSlot == OUTFIT_SLOT_HEAD then
-            itemMaterialIndex = 0
-        elseif slot.source ~= "Outfit Style" then
-            return
-        end
-
-        table.insert(entries, string.format("%d.%d.%d.%d.%d.%d",
-            slot.outfitSlot,
-            slot.collectibleId,
-            itemMaterialIndex,
-            slot.dyes[1].id or 0,
-            slot.dyes[2].id or 0,
-            slot.dyes[3].id or 0))
-    end
-
-    for _, slot in ipairs(appearance.armorSlots or {}) do
-        AddSlot(slot)
-    end
-
-    for _, slot in ipairs(appearance.weaponSlots or {}) do
-        AddSlot(slot)
-    end
-
-    return SHARE_PREFIX .. table.concat(entries, ",")
-end
-
-function VestigeMirror.Data:DecodeShareString(value)
-    if not value or value == "" then
-        return nil
-    end
-
-    local payload = value:match("(VM1:%d[%d%.,]*)")
-    if payload then
-        payload = payload:gsub("[%,%.]+$", "")
-    end
-    if not payload or payload:sub(1, #SHARE_PREFIX) ~= SHARE_PREFIX then
-        return nil
-    end
-
-    local slotsByOutfitSlot = {}
-    local hasSlots = false
-    local body = payload:sub(#SHARE_PREFIX + 1)
-    for entry in string.gmatch(body, "([^,]+)") do
-        local outfitSlot, collectibleId, itemMaterialIndex, primaryDyeId, secondaryDyeId, accentDyeId = entry:match("^(%d+)%.(%d+)%.(%d+)%.(%d+)%.(%d+)%.(%d+)$")
-        outfitSlot = tonumber(outfitSlot)
-        collectibleId = tonumber(collectibleId)
-
-        if not outfitSlot or not collectibleId or collectibleId <= 0 then
-            return nil
-        end
-
-        itemMaterialIndex = tonumber(itemMaterialIndex) or DEFAULT_MATERIAL_INDEX
-
-        slotsByOutfitSlot[outfitSlot] =
-        {
-            outfitSlot = outfitSlot,
-            collectibleId = collectibleId,
-            itemMaterialIndex = itemMaterialIndex,
-            isHeadCollectible = outfitSlot == OUTFIT_SLOT_HEAD and itemMaterialIndex == 0,
-            dyeIds =
-            {
-                tonumber(primaryDyeId) or 0,
-                tonumber(secondaryDyeId) or 0,
-                tonumber(accentDyeId) or 0,
-            },
-        }
-        hasSlots = true
-    end
-
-    if not hasSlots then
-        return nil
-    end
-
-    return
-    {
-        actorCategory = self.actorCategory,
-        outfitName = "Shared Outfit",
-        isShared = true,
-        sharedSlotsByOutfitSlot = slotsByOutfitSlot,
-    }
-end
-
-function VestigeMirror.Data:BuildSharedAppearance(shared)
-    local armorSlots = {}
-    local weaponSlots = {}
-
-    local function BuildSharedSlot(slotDef)
-        local sharedSlot = shared.sharedSlotsByOutfitSlot[slotDef.outfitSlot]
-        local slot =
-        {
-            label = slotDef.label,
-            icon = slotDef.icon,
-            source = "Shared Outfit",
-            name = "Empty",
-            materialName = nil,
-            dyes = BuildDyes(0, 0, 0),
-            outfitSlot = slotDef.outfitSlot,
-            equipSlot = slotDef.equipSlot,
-            isEmpty = true,
-        }
-
-        if sharedSlot then
-            local itemMaterialIndex = sharedSlot.isHeadCollectible and nil or sharedSlot.itemMaterialIndex
-            local name, materialName, icon = GetCollectibleDisplay(sharedSlot.collectibleId, itemMaterialIndex)
-            slot.name = name
-            slot.source = sharedSlot.isHeadCollectible and "Head Collectible" or "Shared Outfit"
-            slot.materialName = sharedSlot.isHeadCollectible and nil or materialName
-            slot.icon = icon or slot.icon
-            slot.collectibleId = sharedSlot.collectibleId
-            slot.itemMaterialIndex = sharedSlot.isHeadCollectible and nil or itemMaterialIndex
-            slot.dyes = BuildDyesFromIds(sharedSlot.dyeIds)
-            slot.isEmpty = false
-        end
-
-        return slot
-    end
-
-    for _, slotDef in ipairs(ARMOR_SLOTS) do
-        table.insert(armorSlots, BuildSharedSlot(slotDef))
-    end
-
-    for _, slotDef in ipairs(WEAPON_SLOTS) do
-        local sharedSlot = shared.sharedSlotsByOutfitSlot[slotDef.outfitSlot]
-        if sharedSlot then
-            table.insert(weaponSlots, BuildSharedSlot(slotDef))
-        end
-    end
-
-    return
-    {
-        actorCategory = self.actorCategory,
-        outfitName = shared.outfitName,
-        armorSlots = armorSlots,
-        weaponSlots = weaponSlots,
-        appearanceCollectibles = {},
-        isShared = true,
-        sharedSlotsByOutfitSlot = shared.sharedSlotsByOutfitSlot,
     }
 end

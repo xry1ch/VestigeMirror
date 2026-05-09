@@ -15,66 +15,6 @@ local RIGHT_ARMOR_SLOTS =
     Feet = true,
 }
 
-local TEXTURES =
-{
-    { name = "None" },
-    { name = "Rourken Steamguards", path = "/art/fx/texture/rourkensteamguards_overlay.dds" },
-    { name = "Arcanist Ring 01", path = "/art/fx/texture/arcanist_textring_01.dds" },
-    { name = "Arcanist Ring 02", path = "/art/fx/texture/arcanist_textring_02.dds" },
-    { name = "Arcanist Ring 03", path = "/art/fx/texture/arcanist_textring_03.dds" },
-    { name = "Conversation Text Background", path = "/esoui/art/interaction/conversation_textbg.dds" },
-    { name = "Empty Vortex", path = "/art/fx/texture/emptyvortex.dds" },
-    { name = "Daedric Text", path = "/esoui/art/pregameanimatedbackground/onetamriel/daedrictext.dds" },
-    { name = "Blood Bib", path = "/art/fx/texture/fxmaterial/bloodbib.dds" },
-    { name = "Blood Splatters 4x4", path = "/art/fx/texture/bloodsplatters4x4.dds" },
-    { name = "Cherry Blossom Ground", path = "/art/fx/texture/cherryblossomground_01.dds" },
-    { name = "Ouroboros Loading Bloom", path = "/esoui/art/pregameanimatedbackground/ouroboros_loading_bloom.dds" },
-    { name = "Wood Station Rune", path = "/art/fx/texture/wood_station_rune01.dds" },
-    { name = "Avatar Activation Rune Glow", path = "/art/fx/texture/fxmaterial/skr_duc_avataractivationrune01_glow.dds" },
-    { name = "Holy Rune Sigil", path = "/art/fx/texture/sigilholyrunes.dds" },
-    { name = "Rune Circle Sigil", path = "/art/fx/texture/sigil_runecircle_01.dds" },
-    { name = "Magic Rune Sigil", path = "/art/fx/texture/sigil_magicrune.dds" },
-    { name = "Julianos Dwarven Spider Sigil", path = "/art/fx/texture/sigil_julianos_runed_dwarvenspider_whole.dds" },
-    { name = "Daedric Rune Half 2", path = "/art/fx/texture/sigil_daedricrune_half2.dds" },
-    { name = "Daedric Rune Half 1", path = "/art/fx/texture/sigil_daedricrune_half1.dds" },
-    { name = "Daedric Rune 03", path = "/art/fx/texture/sigil_daedricrune_03.dds" },
-    { name = "Daedric Rune 02", path = "/art/fx/texture/sigil_daedricrune_02.dds" },
-    { name = "Daedric Rune 01", path = "/art/fx/texture/sigil_daedricrune_01.dds" },
-    { name = "Ancestor Moth Rune Ring", path = "/art/fx/texture/sigil_ancestormothrunering.dds" },
-    { name = "Enchanting Lines 1", path = "/art/fx/texture/runes_enchanting_lines1.dds" },
-    { name = "Enchanting Lines", path = "/art/fx/texture/runes_enchanting_lines.dds" },
-    { name = "Runic Armor Rune", path = "/art/fx/texture/arcanist_tank4_runicarmor_rune.dds" },
-    { name = "Portal Ground Rune", path = "/art/fx/texture/arcanist_support_portalgroundrune_02.dds" },
-    { name = "Battleground Green Loss Banner", path = "/esoui/art/battlegrounds/battleground_banner_green_loss.dds" },
-    { name = "Battleground Orange Loss Banner", path = "/esoui/art/battlegrounds/battleground_banner_orange_loss.dds" },
-    { name = "Battleground Banner Header", path = "/esoui/art/battlegrounds/battleground_banner_header.dds" },
-    { name = "Tribute Leaderboard Top 10", path = "/esoui/art/tribute/tributeendofgameleaderboardbackdrop_top10.dds" },
-    { name = "Tribute Leaderboard Top 2", path = "/esoui/art/tribute/tributeendofgameleaderboardbackdrop_top2.dds" },
-    { name = "Tribute Leaderboard Standard", path = "/esoui/art/tribute/tributeendofgameleaderboardbackdrop_standard.dds" },
-    { name = "Tribute Victory Banner", path = "/esoui/art/tribute/tributeendofgamebanner_victory.dds" },
-    { name = "Tribute Defeat Banner", path = "/esoui/art/tribute/tributeendofgamebanner_defeat.dds" },
-    { name = "Tribute Targeted Card Overlay", path = "/esoui/art/tribute/overlays/tributecardoverlay_targeted.dds" },
-    { name = "Tribute Contract Banner", path = "/esoui/art/tribute/tributecardcontractbanner.dds" },
-    { name = "Tribute Card Back Highlight", path = "/esoui/art/tribute/tributecardback_highlight.dds" },
-    { name = "Vampire Sigil", path = "/art/fx/texture/sigil_vampire.dds" },
-    { name = "Vampire Door Sigil", path = "/art/fx/texture/sigil_vampire_door.dds" },
-}
-
-local BASE_TEXTURE_WIDTH = 1024
-local BASE_TEXTURE_HEIGHT = 1024
-local MIN_TEXTURE_SCALE = 0.25
-local MAX_TEXTURE_SCALE = 3
-
-local function Clamp(value, minimum, maximum)
-    if value < minimum then
-        return minimum
-    elseif value > maximum then
-        return maximum
-    end
-
-    return value
-end
-
 local function SetDye(control, dye)
     local alpha = dye.empty and 0.55 or 1
     control:SetCenterColor(dye.r, dye.g, dye.b, alpha)
@@ -357,195 +297,52 @@ function VestigeMirror.UI:Initialize(control)
     self.rightCallouts = {}
     self.weaponCallouts = {}
     self.collectibleRows = {}
-    self.selectedTextureIndex = 1
-    self.textureScale = 1
-    self.textureOffsetX = 0
-    self.textureOffsetY = 0
-    self.textureDragging = false
-    self.textureMoveMode = false
-    self.texture = VestigeMirrorWindowTexture
-    self.textureMoveLayer = VestigeMirrorTextureMoveLayer
-    self.textureBar = VestigeMirrorTextureBar
-    self.textureNext = self.textureBar:GetNamedChild("TextureNext")
-    self.texturePrevious = self.textureBar:GetNamedChild("TexturePrevious")
-    self.scaleDown = self.textureBar:GetNamedChild("ScaleDown")
-    self.scaleUp = self.textureBar:GetNamedChild("ScaleUp")
-    self.moveTexture = self.textureBar:GetNamedChild("MoveTexture")
-    self.textureNextLabel = self.textureNext:GetNamedChild("Label")
-    self.moveTextureLabel = self.moveTexture:GetNamedChild("Label")
-    self.toggleCollectibles = self.textureBar:GetNamedChild("ToggleCollectibles")
+    self.toggleBar = VestigeMirrorToggleBar
+    self.toggleCollectibles = self.toggleBar:GetNamedChild("ToggleCollectibles")
     self.toggleCollectiblesLabel = self.toggleCollectibles:GetNamedChild("Label")
     self.collectiblesVisible = true
 
-    SetTextButtonHandler(self.textureNext, function()
-        self:CycleTexture(1)
-    end)
-    SetTextButtonHandler(self.texturePrevious, function()
-        self:CycleTexture(-1)
-    end)
-    SetTextButtonHandler(self.scaleDown, function()
-        self:AdjustTextureScale(-0.1)
-    end)
-    SetTextButtonHandler(self.scaleUp, function()
-        self:AdjustTextureScale(0.1)
-    end)
-    SetTextButtonHandler(self.moveTexture, function()
-        self:ToggleTextureMoveMode()
-    end)
     SetTextButtonHandler(self.toggleCollectibles, function()
         self:ToggleCollectibles()
     end)
 
     control:SetHandler("OnKeyDown", function(_, key)
-        if key == KEY_ESCAPE then
-            if self.textureMoveMode then
-                self:SetTextureMoveMode(false)
-                return
-            end
+        if key == KEY_ESCAPE or key == KEY_GAMEPAD_START then
             VestigeMirror:Hide()
+            return true
+        elseif key == KEY_GAMEPAD_BUTTON_4 then
+            self:ToggleCollectibles()
+            return true
         end
     end)
-
-    self.textureMoveLayer:SetHandler("OnMouseDown", function(_, button)
-        if button ~= MOUSE_BUTTON_INDEX_LEFT or not self.textureMoveMode or not self:IsTextureVisible() then
-            return
-        end
-
-        local mouseX, mouseY = GetUIMousePosition()
-        self.textureDragging = true
-        self.textureDragStartMouseX = mouseX
-        self.textureDragStartMouseY = mouseY
-        self.textureDragStartOffsetX = self.textureOffsetX
-        self.textureDragStartOffsetY = self.textureOffsetY
-    end)
-
-    self.textureMoveLayer:SetHandler("OnMouseUp", function()
-        self.textureDragging = false
-    end)
-
-    self.textureMoveLayer:SetHandler("OnUpdate", function()
-        if not self.textureDragging then
-            return
-        end
-
-        if IsMouseButtonDown and not IsMouseButtonDown(MOUSE_BUTTON_INDEX_LEFT) then
-            self.textureDragging = false
-            return
-        end
-
-        local mouseX, mouseY = GetUIMousePosition()
-        self.textureOffsetX = self.textureDragStartOffsetX + mouseX - self.textureDragStartMouseX
-        self.textureOffsetY = self.textureDragStartOffsetY + mouseY - self.textureDragStartMouseY
-        self:ApplyTextureState()
-    end)
-
-    self:ApplyTextureState()
+    self:RefreshToggleControls()
 end
 
 function VestigeMirror.UI:IsShowing()
     return self.control and not self.control:IsHidden()
 end
 
-function VestigeMirror.UI:IsTextureVisible()
-    local texture = TEXTURES[self.selectedTextureIndex]
-    return texture and texture.path ~= nil
+function VestigeMirror.UI:RefreshToggleControls()
+    self.toggleCollectiblesLabel:SetText(self.collectiblesVisible and "Y/Triangle: Hide Collectibles" or "Y/Triangle: Show Collectibles")
 end
 
-function VestigeMirror.UI:GetSelectedTextureName()
-    local texture = TEXTURES[self.selectedTextureIndex] or TEXTURES[1]
-    return texture.name
+function VestigeMirror.UI:ShowToggleBar()
+    self.toggleBar:SetHidden(false)
+    self:RefreshToggleControls()
 end
 
-function VestigeMirror.UI:RefreshTextureControls()
-    self.textureNextLabel:SetText(string.format("Texture: %s", self:GetSelectedTextureName()))
-    self.moveTextureLabel:SetText(self.textureMoveMode and "Done Moving Texture" or "Move Texture")
-    self.toggleCollectiblesLabel:SetText(self.collectiblesVisible and "Hide Collectibles" or "Show Collectibles")
-    self.moveTexture:SetMouseEnabled(self:IsTextureVisible())
-    self.moveTextureLabel:SetColor(0.96, 0.94, 0.87, self:IsTextureVisible() and 1 or 0.45)
-end
-
-function VestigeMirror.UI:ShowTextureKeybinds()
-    self.textureBar:SetHidden(false)
-    self:RefreshTextureControls()
-end
-
-function VestigeMirror.UI:HideTextureKeybinds()
-    self:ResetTextureState()
-    self.textureBar:SetHidden(true)
-end
-
-function VestigeMirror.UI:ResetTextureState()
-    self.selectedTextureIndex = 1
-    self.textureScale = 1
-    self.textureOffsetX = 0
-    self.textureOffsetY = 0
-    self:SetTextureMoveMode(false)
-    self:ApplyTextureState()
-end
-
-function VestigeMirror.UI:SetTextureMoveMode(enabled)
-    self.textureMoveMode = enabled and self:IsTextureVisible() or false
-    self.textureDragging = false
-    self.textureMoveLayer:SetHidden(not self.textureMoveMode)
-    self:RefreshTextureControls()
-end
-
-function VestigeMirror.UI:ToggleTextureMoveMode()
-    self:SetTextureMoveMode(not self.textureMoveMode)
+function VestigeMirror.UI:HideToggleBar()
+    self.toggleBar:SetHidden(true)
 end
 
 function VestigeMirror.UI:SetCollectiblesVisible(visible)
     self.collectiblesVisible = visible
     self.control:GetNamedChild("Collectibles"):SetHidden(not visible)
-    self:RefreshTextureControls()
+    self:RefreshToggleControls()
 end
 
 function VestigeMirror.UI:ToggleCollectibles()
     self:SetCollectiblesVisible(not self.collectiblesVisible)
-end
-
-function VestigeMirror.UI:ApplyTextureState()
-    local texture = TEXTURES[self.selectedTextureIndex] or TEXTURES[1]
-
-    if not texture.path then
-        self.texture:SetHidden(true)
-        self:SetTextureMoveMode(false)
-        self:RefreshTextureControls()
-        return
-    end
-
-    self.texture:SetTexture(texture.path)
-    local texWidth, texHeight = self.texture:GetTextureFileDimensions()
-    local safeTexWidth = (texWidth and texWidth > 0) and texWidth or BASE_TEXTURE_WIDTH
-    local safeTexHeight = (texHeight and texHeight > 0) and texHeight or BASE_TEXTURE_HEIGHT
-    local aspectRatio = safeTexWidth / safeTexHeight
-    local width
-    local height
-
-    -- Keep each texture's native aspect ratio and scale relative to its largest side.
-    if aspectRatio >= 1 then
-        width = BASE_TEXTURE_WIDTH * self.textureScale
-        height = (BASE_TEXTURE_HEIGHT / aspectRatio) * self.textureScale
-    else
-        width = (BASE_TEXTURE_WIDTH * aspectRatio) * self.textureScale
-        height = BASE_TEXTURE_HEIGHT * self.textureScale
-    end
-
-    self.texture:SetDimensions(width, height)
-    self.texture:ClearAnchors()
-    self.texture:SetAnchor(CENTER, self.control, CENTER, self.textureOffsetX, self.textureOffsetY)
-    self.texture:SetHidden(false)
-    self:RefreshTextureControls()
-end
-
-function VestigeMirror.UI:CycleTexture(delta)
-    self.selectedTextureIndex = ((self.selectedTextureIndex - 1 + delta) % #TEXTURES) + 1
-    self:ApplyTextureState()
-end
-
-function VestigeMirror.UI:AdjustTextureScale(delta)
-    self.textureScale = Clamp(self.textureScale + delta, MIN_TEXTURE_SCALE, MAX_TEXTURE_SCALE)
-    self:ApplyTextureState()
 end
 
 function VestigeMirror.UI:Refresh(appearance)

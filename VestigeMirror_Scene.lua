@@ -30,13 +30,13 @@ function VestigeMirror.Scene:OnSceneStateChanged(newState)
         self.pendingAppearance = nil
         self.appearance = appearance
         VestigeMirror.UI:Refresh(appearance)
-        VestigeMirror.UI:ShowTextureKeybinds()
+        VestigeMirror.UI:ShowToggleBar()
     elseif newState == SCENE_SHOWN then
         if self.appearance then
             VestigeMirror.Preview:ShowAppearance(self.appearance)
         end
     elseif newState == SCENE_HIDDEN then
-        VestigeMirror.UI:HideTextureKeybinds()
+        VestigeMirror.UI:HideToggleBar()
         VestigeMirror.Preview:Hide()
         self.appearance = nil
     end
