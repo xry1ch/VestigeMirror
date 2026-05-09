@@ -3,7 +3,6 @@ VestigeMirror.UI = {}
 
 local LEFT_ARMOR_SLOTS =
 {
-    Head = true,
     Chest = true,
     Hands = true,
     Waist = true,
@@ -205,6 +204,12 @@ local function AnchorCallout(callout, parent, previousCallout, index, layout)
         else
             callout:SetAnchor(LEFT, previousCallout, RIGHT, 28, 0)
         end
+    elseif layout == "split" then
+        if index == 1 then
+            callout:SetAnchor(TOPLEFT, parent, TOPLEFT, 0, 0)
+        else
+            callout:SetAnchor(TOPRIGHT, parent, TOPRIGHT, 0, 0)
+        end
     else
         if index == 1 then
             callout:SetAnchor(TOPLEFT, parent, TOPLEFT, 0, 0)
@@ -235,18 +240,21 @@ local function AcquireCallouts(parent, callouts, slots, layout, side)
 end
 
 local function SplitArmorSlots(slots)
+    local headSlots = {}
     local leftSlots = {}
     local rightSlots = {}
 
     for _, slot in ipairs(slots) do
-        if LEFT_ARMOR_SLOTS[slot.label] then
+        if slot.label == "Head" then
+            table.insert(headSlots, slot)
+        elseif LEFT_ARMOR_SLOTS[slot.label] then
             table.insert(leftSlots, slot)
         elseif RIGHT_ARMOR_SLOTS[slot.label] then
             table.insert(rightSlots, slot)
         end
     end
 
-    return leftSlots, rightSlots
+    return headSlots, leftSlots, rightSlots
 end
 
 local function SetupCollectibleRow(row, collectible)
@@ -350,6 +358,7 @@ end
 
 function VestigeMirror.UI:Initialize(control)
     self.control = control
+    self.headCallouts = {}
     self.leftCallouts = {}
     self.rightCallouts = {}
     self.weaponCallouts = {}
@@ -548,10 +557,11 @@ end
 function VestigeMirror.UI:Refresh(appearance)
     self.control:GetNamedChild("Subtitle"):SetText(appearance.outfitName)
 
-    local leftArmorSlots, rightArmorSlots = SplitArmorSlots(appearance.armorSlots)
+    local headSlots, leftArmorSlots, rightArmorSlots = SplitArmorSlots(appearance.armorSlots)
+    AcquireCallouts(self.control:GetNamedChild("HeadCallouts"), self.headCallouts, headSlots, nil, "left")
     AcquireCallouts(self.control:GetNamedChild("LeftCallouts"), self.leftCallouts, leftArmorSlots, nil, "left")
     AcquireCallouts(self.control:GetNamedChild("RightCallouts"), self.rightCallouts, rightArmorSlots, nil, "right")
-    AcquireCallouts(self.control:GetNamedChild("BottomCallouts"), self.weaponCallouts, appearance.weaponSlots, "horizontal", "left")
+    AcquireCallouts(self.control:GetNamedChild("BottomCallouts"), self.weaponCallouts, appearance.weaponSlots, "split", "left")
     AcquireCollectibleRows(self.control:GetNamedChild("Collectibles"):GetNamedChild("Rows"), self.collectibleRows, appearance.appearanceCollectibles or {})
     self.control:GetNamedChild("Collectibles"):SetHidden(not self.collectiblesVisible)
 end

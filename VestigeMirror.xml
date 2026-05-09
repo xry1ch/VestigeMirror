@@ -94,9 +94,14 @@
                     </OnClicked>
                 </Button>
 
+                <Control name="$(parent)HeadCallouts">
+                    <Dimensions x="384" y="130"/>
+                    <Anchor point="CENTER" offsetX="-410" offsetY="-250"/>
+                </Control>
+
                 <Control name="$(parent)LeftCallouts">
-                    <Dimensions x="384" y="500"/>
-                    <Anchor point="CENTER" offsetX="-570" offsetY="6"/>
+                    <Dimensions x="384" y="360"/>
+                    <Anchor point="CENTER" offsetX="-570" offsetY="8"/>
                 </Control>
 
                 <Control name="$(parent)RightCallouts">
@@ -105,7 +110,7 @@
                 </Control>
 
                 <Control name="$(parent)BottomCallouts">
-                    <Dimensions x="820" y="102"/>
+                    <Dimensions x="1140" y="102"/>
                     <Anchor point="CENTER" offsetY="386"/>
                 </Control>
 
