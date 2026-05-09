@@ -96,22 +96,22 @@
 
                 <Control name="$(parent)HeadCallouts">
                     <Dimensions x="384" y="130"/>
-                    <Anchor point="CENTER" offsetX="-410" offsetY="-250"/>
+                    <Anchor point="CENTER" offsetX="-410" offsetY="-298"/>
                 </Control>
 
                 <Control name="$(parent)LeftCallouts">
                     <Dimensions x="384" y="360"/>
-                    <Anchor point="CENTER" offsetX="-570" offsetY="8"/>
+                    <Anchor point="CENTER" offsetX="-570" offsetY="-40"/>
                 </Control>
 
                 <Control name="$(parent)RightCallouts">
                     <Dimensions x="384" y="360"/>
-                    <Anchor point="CENTER" offsetX="570" offsetY="8"/>
+                    <Anchor point="CENTER" offsetX="570" offsetY="-40"/>
                 </Control>
 
                 <Control name="$(parent)BottomCallouts">
                     <Dimensions x="1140" y="102"/>
-                    <Anchor point="CENTER" offsetY="386"/>
+                    <Anchor point="CENTER" offsetY="338"/>
                 </Control>
 
                 <Control name="$(parent)Collectibles">
