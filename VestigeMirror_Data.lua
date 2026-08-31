@@ -108,7 +108,7 @@ local function GetActiveHeadCollectibleDisplay()
         return nil
     end
 
-    local collectibleId = GetActiveCollectibleByType(COLLECTIBLE_CATEGORY_TYPE_HAT)
+    local collectibleId = GetActiveCollectibleByType(COLLECTIBLE_CATEGORY_TYPE_HAT, PLAYER_ACTOR_CATEGORY)
     if not collectibleId or collectibleId <= 0 then
         return nil
     end
@@ -151,7 +151,7 @@ local function BuildActiveAppearanceCollectibles()
 
         local categoryType = ResolveFirstConstant(collectibleDef.typeNames)
         if GetActiveCollectibleByType and categoryType then
-            local collectibleId = GetActiveCollectibleByType(categoryType)
+            local collectibleId = GetActiveCollectibleByType(categoryType, PLAYER_ACTOR_CATEGORY)
             if collectibleId and collectibleId > 0 then
                 local name, _, icon = GetCollectibleInfo(collectibleId)
                 collectible.name = FormatName(name)

@@ -46,6 +46,7 @@ function VestigeMirror.Scene:OnSceneStateChanged(newState)
             VestigeMirror.Preview:ShowAppearance(self.appearance)
         end
     elseif newState == SCENE_HIDDEN then
+        VestigeMirror.Actions:HideMementoPicker()
         VestigeMirror.UI:HideTextureKeybinds()
         VestigeMirror.Preview:Hide()
         self.appearance = nil

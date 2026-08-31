@@ -397,6 +397,7 @@ function VestigeMirror.UI:Initialize(control)
     self.moveTextureLabel = self.moveTexture:GetNamedChild("Label")
     self.toggleCollectibles = self.textureBar:GetNamedChild("ToggleCollectibles")
     self.toggleCollectiblesLabel = self.toggleCollectibles:GetNamedChild("Label")
+    self.mementosButton = self.textureBar:GetNamedChild("Mementos")
     self.collectiblesVisible = true
 
     SetTextButtonHandler(self.textureNext, function()
@@ -417,9 +418,17 @@ function VestigeMirror.UI:Initialize(control)
     SetTextButtonHandler(self.toggleCollectibles, function()
         self:ToggleCollectibles()
     end)
+    SetTextButtonHandler(self.mementosButton, function()
+        self:SetTextureMoveMode(false)
+        VestigeMirror.Actions:ToggleMementoPicker()
+    end)
 
     control:SetHandler("OnKeyDown", function(_, key)
         if key == KEY_ESCAPE then
+            if VestigeMirror.Actions:IsMementoPickerShowing() then
+                VestigeMirror.Actions:HideMementoPicker()
+                return
+            end
             if self.textureMoveMode then
                 self:SetTextureMoveMode(false)
                 return
