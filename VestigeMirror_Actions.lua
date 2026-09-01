@@ -153,6 +153,7 @@ function VestigeMirror.Actions:RunOutsideFraming(callback)
 
             if VestigeMirror.Scene.appearance then
                 VestigeMirror.Preview:ShowAppearance(VestigeMirror.Scene.appearance)
+                VestigeMirror.UI:ApplyFrame()
             end
         end, RESTORE_FRAMING_DELAY_MS)
     end, 0)

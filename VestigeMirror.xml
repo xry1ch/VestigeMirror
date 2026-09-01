@@ -165,7 +165,7 @@
         </TopLevelControl>
 
         <TopLevelControl name="VestigeMirrorTextureBar" hidden="true" mouseEnabled="true" layer="OVERLAY" tier="HIGH">
-            <Dimensions x="1225" y="26"/>
+            <Dimensions x="1445" y="26"/>
             <Anchor point="BOTTOM" offsetY="-2"/>
             <Controls>
                 <Control name="$(parent)TextureNext" mouseEnabled="true">
@@ -233,6 +233,16 @@
                     <Anchor point="LEFT" relativeTo="$(parent)ToggleCollectibles" relativePoint="RIGHT" offsetX="12"/>
                     <Controls>
                         <Label name="$(parent)Label" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Play Memento">
+                            <AnchorFill/>
+                        </Label>
+                    </Controls>
+                </Control>
+
+                <Control name="$(parent)FramePreset" mouseEnabled="true">
+                    <Dimensions x="210" y="24"/>
+                    <Anchor point="LEFT" relativeTo="$(parent)Mementos" relativePoint="RIGHT" offsetX="12"/>
+                    <Controls>
+                        <Label name="$(parent)Label" font="$(BOLD_FONT)|16|soft-shadow-thick" color="F6F0DEFF" horizontalAlignment="CENTER" verticalAlignment="CENTER" text="Frame: Full Body">
                             <AnchorFill/>
                         </Label>
                     </Controls>

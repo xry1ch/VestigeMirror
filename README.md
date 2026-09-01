@@ -1,5 +1,9 @@
 ![preview](./media/preview.png)
 
+## Frame Presets
+
+Use **Frame** on the bottom bar to cycle between Full Body, Torso, Portrait, Detail, Left Composition, and Right Composition. The composition presets place every appearance panel on the side opposite the character. Closing Vestige Mirror restores ESO's normal preview framing.
+
 ## Mementos
 
 While Vestige Mirror is open, use **Play Memento** on the bottom bar. It opens a vertical, scrollable list above the button containing every unlocked memento available to the current character.
